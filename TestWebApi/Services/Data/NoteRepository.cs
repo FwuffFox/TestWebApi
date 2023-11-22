@@ -1,20 +1,25 @@
+using Microsoft.EntityFrameworkCore;
 using TestWebApi.Models;
 
 namespace TestWebApi.Services.Data;
 
 public class NoteRepository
 {
-    private readonly List<Note> _notes = new(10)
+    private readonly NotesContext _dbContext;
+
+    public NoteRepository(NotesContext dbContext)
     {
-        new () { Id = 0, TimeOfCreation = DateTime.Now },
-        new () { Id = 1, Name = "Second", TimeOfCreation = DateTime.Now },
-        new () { Id = 2, TimeOfCreation = DateTime.Now },
-        new () { Id = 3, TimeOfCreation = DateTime.Now },
-    };
+        _dbContext = dbContext;
+    }
 
-    public IEnumerable<Note> GetNotes() => _notes.AsEnumerable();
+    public IEnumerable<Note> GetNotes() => _dbContext.Notes.AsEnumerable();
 
-    public Note? GetNote(int id) => _notes.FirstOrDefault(note => note.Id == id);
+    public async Task<Note?> GetNote(int id) => 
+        await _dbContext.Notes.FirstOrDefaultAsync(note => note.Id == id);
 
-    public void AddNote(Note note) => _notes.Add(note);
+    public async Task AddNote(Note note)
+    {
+        await _dbContext.Notes.AddAsync(note);
+        await _dbContext.SaveChangesAsync();
+    }
 }

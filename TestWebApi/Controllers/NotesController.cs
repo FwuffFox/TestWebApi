@@ -4,6 +4,7 @@ using TestWebApi.Services.Data;
 
 namespace TestWebApi.Controllers;
 
+
 [ApiController]
 [Route("[controller]")]
 public class NotesController : ControllerBase
@@ -26,9 +27,9 @@ public class NotesController : ControllerBase
     [HttpGet("{id:int}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Note))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult<Note> GetNoteById([FromRoute] int id)
+    public async Task<ActionResult<Note>> GetNoteById([FromRoute] int id)
     {
-        Note? note = _noteRepository.GetNote(id);
+        Note? note = await _noteRepository.GetNote(id);
         
         if (note is null)
         {
@@ -40,9 +41,9 @@ public class NotesController : ControllerBase
 
     [HttpPost("")]
     [ProducesResponseType(StatusCodes.Status201Created)]
-    public ActionResult<Note> CreateNote(Note note)
+    public async Task<ActionResult<Note>> CreateNote(Note note)
     {
-        _noteRepository.AddNote(note);
+        await _noteRepository.AddNote(note);
         _logger.LogInformation("Created new Note with id: {ID}", note.Id);
         return CreatedAtAction(nameof(GetNoteById), new {id = note.Id}, note);
     }

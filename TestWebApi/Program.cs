@@ -1,4 +1,6 @@
+using Microsoft.EntityFrameworkCore;
 using TestWebApi;
+using TestWebApi.Services;
 using TestWebApi.Services.Data;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -9,6 +11,11 @@ builder.Services.AddControllers();
 builder.Services
     .AddEndpointsApiExplorer()
     .AddSwaggerGen();
+
+builder.Services.AddDbContext<NotesContext>(op =>
+{
+    op.UseSqlite("Data Source=database.db");
+});
 
 builder.Services.AddScoped<NoteRepository>();
 
