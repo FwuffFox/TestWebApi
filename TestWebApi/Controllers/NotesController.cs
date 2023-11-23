@@ -18,8 +18,8 @@ public class NotesController : ControllerBase
         _noteRepository = noteRepository;
     }
 
-    [HttpGet("")]
-    public IEnumerable<Note> GetNotes()
+    [HttpGet]
+    public IEnumerable<Note> GetAll()
     {
         return _noteRepository.GetNotes();
     }
@@ -27,24 +27,42 @@ public class NotesController : ControllerBase
     [HttpGet("{id:int}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Note))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<Note>> GetNoteById([FromRoute] int id)
+    public async Task<IActionResult> Get([FromRoute] int id)
     {
         Note? note = await _noteRepository.GetNote(id);
         
-        if (note is null)
-        {
-            return NotFound();
-        }
-
-        return note;
+        return note is null ? NotFound() : Ok(note);
     }
 
-    [HttpPost("")]
-    [ProducesResponseType(StatusCodes.Status201Created)]
-    public async Task<ActionResult<Note>> CreateNote(Note note)
+    [HttpPost]
+    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(Note))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> Create([FromBody] Note note)
     {
         await _noteRepository.AddNote(note);
         _logger.LogInformation("Created new Note with id: {ID}", note.Id);
-        return CreatedAtAction(nameof(GetNoteById), new {id = note.Id}, note);
+        return CreatedAtAction(nameof(Get), new {id = note.Id}, note);
+    }
+    
+    
+    [HttpDelete]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Delete(int id)
+    {
+        await Task.CompletedTask;
+        return Forbid();
+        // TODO: Implement Delete Endpoint
+    }
+
+    [HttpPatch("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> Put([FromRoute] int id, [FromBody] Note note)
+    {
+        await Task.CompletedTask;
+        return Forbid();
+        // TODO: Implement Create Endpoint
     }
 }
