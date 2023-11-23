@@ -6,3 +6,5 @@ riderModule.iml
 Migrations
 *.db
 *.idea/
+*.vs/
+*.user
