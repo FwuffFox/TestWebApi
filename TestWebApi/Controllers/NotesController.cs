@@ -50,9 +50,10 @@ public class NotesController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(int id)
     {
-        await Task.CompletedTask;
-        return Forbid();
-        // TODO: Implement Delete Endpoint
+        bool isNoteDeleted = await _noteRepository.DeleteNote(id);
+
+
+        return isNoteDeleted ? NoContent() : NotFound();
     }
 
     [HttpPatch("{id:int}")]
@@ -63,6 +64,6 @@ public class NotesController : ControllerBase
     {
         await Task.CompletedTask;
         return Forbid();
-        // TODO: Implement Create Endpoint
+        // TODO: Implement Redact Endpoint
     }
 }

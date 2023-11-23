@@ -22,4 +22,15 @@ public class NoteRepository
         await _dbContext.Notes.AddAsync(note);
         await _dbContext.SaveChangesAsync();
     }
+
+    public async Task<bool> DeleteNote(int id)
+    {
+        Note? noteToDelete = await GetNote(id);
+        if (noteToDelete == null)
+            return false;
+        
+        _dbContext.Notes.Remove(noteToDelete);
+        await _dbContext.SaveChangesAsync();
+        return true;
+    }
 }
